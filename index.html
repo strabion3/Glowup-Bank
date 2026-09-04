@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Glow Up Bank</title>
+<meta name="theme-color" content="#111114">
+<meta name="description" content="Earn screen time by putting in work.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Glow Up Bank">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#111114;
+    --panel:#1a1a1f;
+    --panel-2:#202027;
+    --line:#2c2c33;
+    --text:#EDECE7;
+    --muted:#8f8f98;
+    --lime:#C8FF4D;
+    --blue:#6C8CFF;
+    --danger:#FF6B6B;
+    --gold:#FFC24D;
+    --c-basics:#C8FF4D;
+    --c-skills:#6C8CFF;
+    --c-cardio:#FF9F6C;
+    --c-practice:#B084F0;
+    --c-growth:#5FE0C0;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+  #root{max-width:520px;margin:0 auto;padding:20px 16px 60px;}
+  h1,h2,h3,.num{font-family:'Space Grotesk',sans-serif;}
+
+  .bank{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:22px 20px;margin-bottom:14px;}
+  .bank-label{color:var(--muted);font-size:13px;}
+  .bank-num{font-size:52px;font-weight:700;line-height:1;margin:6px 0 2px;}
+  .bank-num.debt{color:var(--danger);}
+  .bank-num.pos{color:var(--lime);}
+  .bank-sub{color:var(--muted);font-size:13px;}
+  .footer-row{display:flex;gap:8px;margin-top:16px;}
+  .btn{flex:1;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;}
+  .btn.spend{background:var(--blue);border-color:var(--blue);color:#0d0d10;}
+  .btn.setback{background:var(--panel);border-color:var(--danger);color:var(--danger);}
+
+  .quest{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px;}
+  .quest-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .quest-title{font-size:13px;font-weight:600;}
+  .quest-badge{font-size:11px;background:var(--gold);color:#1a1a1f;padding:3px 8px;border-radius:100px;font-weight:600;}
+  .quest-steps{display:flex;gap:6px;}
+  .quest-step{flex:1;text-align:center;font-size:11px;padding:6px 4px;border-radius:8px;background:var(--panel-2);color:var(--muted);border:1px solid var(--line);}
+  .quest-step.done{background:var(--lime);color:#0d0d10;border-color:var(--lime);font-weight:600;}
+
+  .catgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+  .catbar-wrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
+  .catbar-top{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px;}
+  .catbar-track{height:5px;background:var(--line);border-radius:3px;overflow:hidden;}
+  .catbar-fill{height:100%;border-radius:3px;transition:width .2s ease;}
+  .hardcap{grid-column:1/-1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
+
+  .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px;}
+  .tab{flex:none;padding:8px 14px;border-radius:100px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;}
+  .tab.active{background:var(--text);color:#111;border-color:var(--text);}
+
+  .section-title{font-size:14px;color:var(--muted);margin:18px 0 8px 2px;font-weight:500;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;transition:border-color .15s ease, transform .1s ease;}
+  .card:active{transform:scale(0.98);}
+  .card-left{display:flex;flex-direction:column;gap:2px;}
+  .card-name{font-size:15px;font-weight:500;}
+  .card-tier{font-size:11px;color:var(--muted);}
+  .card-right{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;flex:none;}
+  .card-right.pos{color:var(--lime);}
+  .card-right.neg{color:var(--danger);}
+  .plus{width:30px;height:30px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text);}
+
+  .free-card{background:var(--panel);border:1px dashed var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;font-size:14px;color:var(--muted);}
+
+  .input-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;}
+  .input-row{display:flex;gap:8px;margin-top:10px;}
+  .input-row select, .input-row input{flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;}
+  .input-row button{padding:10px 16px;border-radius:10px;border:none;background:var(--lime);color:#0d0d10;font-weight:600;font-size:13px;cursor:pointer;}
+  .input-hint{font-size:11px;color:var(--muted);margin-top:6px;}
+
+  .log{margin-top:20px;}
+  .log-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:8px 2px;border-bottom:1px solid var(--line);}
+  .log-row span:last-child.pos{color:var(--lime);}
+  .log-row span:last-child.neg{color:var(--danger);}
+
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;justify-content:center;z-index:50;}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:520px;}
+  .field{margin-bottom:12px;}
+  .field label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px;}
+  .field input, .field select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;}
+  .modal-actions{display:flex;gap:8px;margin-top:16px;}
+  .empty{text-align:center;color:var(--muted);font-size:13px;padding:30px 0;}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--lime);color:#0d0d10;padding:10px 18px;border-radius:100px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;text-align:center;max-width:90%;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+  .toast.bad{background:var(--danger);color:#1a1a1f;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+const STORAGE_KEY = 'glowup_state_v2';
+const CAP_PER_CATEGORY = 45;
+const HARD_DAILY_CAP = 450;
+const QUEST_CHAIN = ['basics','skills','growth'];
+const QUEST_MULTIPLIER = 1.5;
+
+const CATS = [
+  { id:'basics', label:'Basics', color:'var(--c-basics)' },
+  { id:'skills', label:'Calisthenics', color:'var(--c-skills)' },
+  { id:'cardio', label:'Cardio', color:'var(--c-cardio)' },
+  { id:'practice', label:'Practice', color:'var(--c-practice)' },
+  { id:'growth', label:'Growth', color:'var(--c-growth)' },
+];
+
+const TAP_ITEMS = [
+  // basics
+  { id:'pushup', name:'Push-up', cat:'basics', mins:1, tier:'per rep' },
+  { id:'squat', name:'Squats', cat:'basics', mins:3, tier:'per 10 reps' },
+  { id:'plank', name:'Plank hold', cat:'basics', mins:2, tier:'per 30 sec' },
+  { id:'lunges', name:'Lunges', cat:'basics', mins:3, tier:'per 10 each leg' },
+  { id:'mtnclimb', name:'Mountain climbers', cat:'basics', mins:2, tier:'per 20 reps' },
+  { id:'burpee', name:'Burpee', cat:'basics', mins:2, tier:'per rep' },
+  { id:'pullup', name:'Pull-up', cat:'basics', mins:5, tier:'per rep' },
+  { id:'dragonfly', name:'Dragon fly', cat:'basics', mins:3, tier:'per rep' },
+  // calisthenics skills
+  { id:'frogstand', name:'Frog stand', cat:'skills', mins:3, tier:'landed + held' },
+  { id:'hollow', name:'Hollow body hold', cat:'skills', mins:2, tier:'per 20 sec' },
+  { id:'lsit', name:'L-sit', cat:'skills', mins:5, tier:'any attempt off the floor' },
+  { id:'wallhs', name:'Wall handstand', cat:'skills', mins:6, tier:'per 20 sec held' },
+  { id:'freehs', name:'Freestanding handstand', cat:'skills', mins:10, tier:'balanced, no wall' },
+  { id:'diamondpu', name:'Diamond push-up', cat:'skills', mins:2, tier:'per rep' },
+  { id:'archerpu', name:'Archer push-up', cat:'skills', mins:3, tier:'per rep' },
+  { id:'wallwalk', name:'Wall walk', cat:'skills', mins:5, tier:'per rep' },
+  { id:'superman', name:'Superman hold', cat:'skills', mins:2, tier:'per 20 sec' },
+  { id:'vsit', name:'V-sit', cat:'skills', mins:4, tier:'any attempt' },
+  { id:'deepsquat', name:'Deep squat hold', cat:'skills', mins:2, tier:'per 1 min' },
+  { id:'fullsplit', name:'Full split attempt', cat:'skills', mins:3, tier:'any attempt' },
+  { id:'backlever', name:'Back lever', cat:'skills', mins:12, tier:'tuck or full' },
+  { id:'frontlever', name:'Front lever', cat:'skills', mins:15, tier:'tuck or full' },
+  { id:'pistol', name:'Pistol squat', cat:'skills', mins:8, tier:'per rep, single leg' },
+  { id:'muscleup', name:'Muscle-up', cat:'skills', mins:20, tier:'strict, bar or rings' },
+  { id:'planche', name:'Planche', cat:'skills', mins:25, tier:'tuck through full' },
+  { id:'humanflag', name:'Human flag', cat:'skills', mins:45, tier:'even a 1-second hold' },
+  // growth
+  { id:'bible', name:'Bible chapter', cat:'growth', mins:10, tier:'read + reflect' },
+  { id:'journal', name:'Journal (5 min)', cat:'growth', mins:10, tier:'written' },
+  { id:'readchap', name:'Book chapter', cat:'growth', mins:8, tier:'non-bible' },
+  { id:'learnskill', name:'Learn something', cat:'growth', mins:10, tier:'article or video' },
+  { id:'nophone', name:'No phone, 1 hour', cat:'growth', mins:20, tier:'full hour' },
+  { id:'firstalarm', name:'Woke up on first alarm', cat:'growth', mins:5, tier:'no snoozing' },
+];
+
+const CARDIO_TYPES = [
+  { id:'jog', name:'Jog / run', mode:'km', rate:10 },
+  { id:'jumprope', name:'Jump rope', mode:'min', rate:1 },
+  { id:'sprints', name:'Sprints', mode:'min', rate:1 },
+  { id:'jjacks', name:'Jumping jacks', mode:'min', rate:1 },
+  { id:'stairs', name:'Stair climbing', mode:'min', rate:1 },
+  { id:'bike', name:'Bike ride', mode:'min', rate:1 },
+  { id:'shadowbox', name:'Shadow boxing', mode:'min', rate:1 },
+  { id:'highknees', name:'High knees', mode:'min', rate:1 },
+  { id:'swim', name:'Swimming', mode:'min', rate:1 },
+  { id:'hike', name:'Hiking', mode:'min', rate:1 },
+  { id:'row', name:'Rowing machine', mode:'min', rate:1 },
+];
+
+const PRACTICE_TYPES = [
+  { id:'skateboarding', name:'Skateboarding' },
+  { id:'nunchucks', name:'Nunchucks' },
+  { id:'piano', name:'Piano' },
+  { id:'drawing', name:'Drawing' },
+  { id:'basketball', name:'Basketball' },
+];
+
+const DEDUCTIONS = [
+  { id:'slip', name:'Slip', mins:45 },
+  { id:'release', name:'Release', mins:100 },
+  { id:'lying', name:'Lying', mins:5 },
+  { id:'promise', name:'Broken promise', mins:30 },
+  { id:'procrastinate', name:'Procrastinating', mins:15 },
+  { id:'skipworkout', name:'Skipped planned workout', mins:20 },
+  { id:'overslept', name:'Overslept through alarm', mins:10 },
+  { id:'negself', name:'Negative self-talk', mins:10 },
+  { id:'skipbible', name:'Skipped planned bible chapter', mins:10 },
+  { id:'avoidsocial', name:'Avoided a social situation', mins:15 },
+  { id:'temper', name:'Lost temper', mins:15 },
+  { id:'overspend', name:'Used unearned screen time', mins:30 },
+];
+
+const FREE_ACTIVITIES = ['Stretching', 'Walk outside', 'Drawing (just for fun)', 'Texting a friend', 'Listening to music', 'Just resting'];
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+let state = {
+  balance: 0,
+  totalEarnedToday: 0,
+  lastResetDate: todayStr(),
+  categoryOutstanding: { basics:0, skills:0, cardio:0, practice:0, growth:0 },
+  earnQueue: [],
+  customItems: [],
+  history: [],
+  questPointer: 0,
+  questCompletedToday: false,
+  questMultiplierReady: false,
+};
+
+let activeTab = 'basics';
+
+const root = document.getElementById('root');
+
+async function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      state = Object.assign(state, parsed);
+    }
+  }catch(e){ /* fresh state */ }
+  maybeResetDay();
+  render();
+}
+async function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch(e){ console.error('save failed', e); }
+}
+
+function maybeResetDay(){
+  if(state.lastResetDate !== todayStr()){
+    state.lastResetDate = todayStr();
+    state.totalEarnedToday = 0;
+    state.questPointer = 0;
+    state.questCompletedToday = false;
+    state.questMultiplierReady = false;
+  }
+}
+
+function toast(msg, bad){
+  const t = document.createElement('div');
+  t.className = 'toast' + (bad ? ' bad' : '');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(()=> t.classList.add('show'));
+  setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=> t.remove(), 200); }, 1700);
+}
+
+function allItems(){ return TAP_ITEMS.concat(state.customItems); }
+
+function questProgressCat(cat){
+  if(state.questCompletedToday) return;
+  if(cat === QUEST_CHAIN[state.questPointer]){
+    state.questPointer++;
+    if(state.questPointer >= QUEST_CHAIN.length){
+      state.questCompletedToday = true;
+      state.questMultiplierReady = true;
+      toast('Quest complete — next log gets a 1.5x multiplier');
+    }
+  }
+}
+
+function earn(name, cat, baseMins){
+  let mins = baseMins;
+  let usedMultiplier = false;
+  if(state.questMultiplierReady){
+    const boosted = Math.round(baseMins * QUEST_MULTIPLIER);
+    if(state.categoryOutstanding[cat] + boosted <= CAP_PER_CATEGORY && state.totalEarnedToday + boosted <= HARD_DAILY_CAP){
+      mins = boosted;
+      usedMultiplier = true;
+    }
+  }
+  if(state.categoryOutstanding[cat] + mins > CAP_PER_CATEGORY){
+    toast(CATS.find(c=>c.id===cat).label + ' is capped for now — spend some minutes to unlock more room', true);
+    return;
+  }
+  if(state.totalEarnedToday + mins > HARD_DAILY_CAP){
+    toast('Hit your 450 min hard cap for today', true);
+    return;
+  }
+  state.balance += mins;
+  state.categoryOutstanding[cat] += mins;
+  state.totalEarnedToday += mins;
+  state.earnQueue.push({ cat, amount: mins });
+  state.history.unshift({ name, mins, ts:Date.now() });
+  state.history = state.history.slice(0,12);
+  if(usedMultiplier){
+    state.questMultiplierReady = false;
+    toast('+' + mins + ' min (1.5x bonus applied) — ' + name);
+  } else {
+    toast('+' + mins + ' min — ' + name);
+  }
+  questProgressCat(cat);
+  saveState(); render();
+}
+
+function applyDeduction(d){
+  state.balance -= d.mins;
+  state.history.unshift({ name: d.name, mins: -d.mins, ts:Date.now() });
+  state.history = state.history.slice(0,12);
+  toast('-' + d.mins + ' min — ' + d.name, true);
+  saveState(); render();
+}
+
+function spendMinutes(mins){
+  const spendable = Math.max(0, state.balance);
+  const amt = Math.min(mins, spendable);
+  if(amt <= 0){ toast('Nothing to spend', true); return; }
+  state.balance -= amt;
+  let remaining = amt;
+  while(remaining > 0 && state.earnQueue.length){
+    const lot = state.earnQueue[0];
+    const take = Math.min(lot.amount, remaining);
+    lot.amount -= take;
+    state.categoryOutstanding[lot.cat] -= take;
+    remaining -= take;
+    if(lot.amount <= 0) state.earnQueue.shift();
+  }
+  toast('Spent ' + amt + ' min');
+  saveState(); render();
+}
+
+function addCustomItem(name, cat, mins){
+  state.customItems.push({ id:'custom_'+Date.now(), name, cat, mins:Number(mins), tier:'custom' });
+  saveState(); render();
+}
+
+function render(){
+  const debt = state.balance < 0;
+  root.innerHTML = `
+    <div class="bank">
+      <div class="bank-label">Balance</div>
+      <div class="bank-num ${debt?'debt':'pos'}">${state.balance}</div>
+      <div class="bank-sub">${debt ? 'in debt — earned minutes pay this off before you can spend again' : 'minutes available to spend'}</div>
+      <div class="footer-row">
+        <button class="btn spend" id="spendBtn">Spend time</button>
+        <button class="btn setback" id="setbackBtn">Log a setback</button>
+      </div>
+    </div>
+
+    <div class="quest">
+      <div class="quest-top">
+        <div class="quest-title">Daily chain: Basics → Calisthenics → Growth</div>
+        ${state.questMultiplierReady ? '<div class="quest-badge">1.5x ready</div>' : (state.questCompletedToday ? '<div class="quest-badge">Done</div>' : '')}
+      </div>
+      <div class="quest-steps">
+        ${QUEST_CHAIN.map((c,i) => `<div class="quest-step ${i < state.questPointer ? 'done' : ''}">${CATS.find(x=>x.id===c).label}</div>`).join('')}
+      </div>
+    </div>
+
+    <div class="catgrid" id="catgrid"></div>
+
+    <div class="tabs" id="tabs">
+      ${CATS.map(c => `<div class="tab ${activeTab===c.id?'active':''}" data-cat="${c.id}">${c.label}</div>`).join('')}
+      <div class="tab ${activeTab==='free'?'active':''}" data-cat="free">Free zone</div>
+    </div>
+
+    <div id="list"></div>
+
+    ${state.history.length ? `
+      <div class="log">
+        <div class="section-title">Recent</div>
+        ${state.history.slice(0,6).map(h => `
+          <div class="log-row"><span>${h.name}</span><span class="${h.mins<0?'neg':'pos'}">${h.mins>0?'+':''}${h.mins} min</span></div>
+        `).join('')}
+      </div>
+    ` : ''}
+
+    <div class="footer-row">
+      <button class="btn" id="addBtn">+ Add custom exercise</button>
+    </div>
+  `;
+
+  renderCatGrid();
+  renderList();
+
+  document.querySelectorAll('.tab').forEach(t => t.onclick = () => { activeTab = t.dataset.cat; render(); });
+  document.getElementById('spendBtn').onclick = openSpendModal;
+  document.getElementById('setbackBtn').onclick = () => { activeTab='setbacks'; render(); };
+  document.getElementById('addBtn').onclick = openAddModal;
+}
+
+function renderCatGrid(){
+  const grid = document.getElementById('catgrid');
+  grid.innerHTML = CATS.map(c => {
+    const pct = Math.min(100, (state.categoryOutstanding[c.id] / CAP_PER_CATEGORY) * 100);
+    return `
+      <div class="catbar-wrap">
+        <div class="catbar-top"><span>${c.label}</span><span>${state.categoryOutstanding[c.id]}/${CAP_PER_CATEGORY}</span></div>
+        <div class="catbar-track"><div class="catbar-fill" style="width:${pct}%;background:${c.color}"></div></div>
+      </div>
+    `;
+  }).join('') + `
+    <div class="hardcap">
+      <div class="catbar-top"><span>Total earned today</span><span>${state.totalEarnedToday}/${HARD_DAILY_CAP}</span></div>
+      <div class="catbar-track"><div class="catbar-fill" style="width:${Math.min(100,(state.totalEarnedToday/HARD_DAILY_CAP)*100)}%;background:var(--gold)"></div></div>
+    </div>
+  `;
+}
+
+function renderList(){
+  const list = document.getElementById('list');
+
+  if(activeTab === 'free'){
+    list.innerHTML = `<div class="section-title">No cost, no earn — just neutral ground</div>` +
+      FREE_ACTIVITIES.map(f => `<div class="free-card">${f}</div>`).join('');
+    return;
+  }
+
+  if(activeTab === 'setbacks'){
+    list.innerHTML = `<div class="section-title">Tap to log a setback (subtracts, can go negative)</div>` +
+      DEDUCTIONS.map(d => `
+        <div class="card" data-deduct="${d.id}">
+          <div class="card-left"><div class="card-name">${d.name}</div></div>
+          <div class="card-right neg">-${d.mins}<div class="plus">−</div></div>
+        </div>
+      `).join('');
+    list.querySelectorAll('[data-deduct]').forEach(c => {
+      c.onclick = () => applyDeduction(DEDUCTIONS.find(d => d.id === c.dataset.deduct));
+    });
+    return;
+  }
+
+  if(activeTab === 'cardio'){
+    list.innerHTML = `
+      <div class="input-card">
+        <div class="section-title" style="margin-top:0;">Log cardio</div>
+        <div class="input-row">
+          <select id="cardioType">${CARDIO_TYPES.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}</select>
+        </div>
+        <div class="input-row">
+          <input type="number" id="cardioAmt" placeholder="0" min="0" step="0.1">
+          <button id="cardioLog">Log</button>
+        </div>
+        <div class="input-hint" id="cardioHint">Jog: 10 min earned per km. Everything else: 1 min per min done.</div>
+      </div>
+    `;
+    const sel = document.getElementById('cardioType');
+    const hint = document.getElementById('cardioHint');
+    const updateHint = () => {
+      const t = CARDIO_TYPES.find(c => c.id === sel.value);
+      hint.textContent = t.mode === 'km' ? 'Enter distance in km — earns ' + t.rate + ' min per km.' : 'Enter minutes done — 1:1 earned.';
+    };
+    sel.onchange = updateHint; updateHint();
+    document.getElementById('cardioLog').onclick = () => {
+      const t = CARDIO_TYPES.find(c => c.id === sel.value);
+      const val = Number(document.getElementById('cardioAmt').value);
+      if(val > 0){
+        const mins = Math.round(val * t.rate);
+        earn(t.name + (t.mode==='km' ? ' ('+val+'km)' : ' ('+val+'min)'), 'cardio', mins);
+      }
+    };
+    return;
+  }
+
+  if(activeTab === 'practice'){
+    list.innerHTML = `
+      <div class="input-card">
+        <div class="section-title" style="margin-top:0;">Log practice</div>
+        <div class="input-row">
+          <select id="practiceType">${PRACTICE_TYPES.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}</select>
+        </div>
+        <div class="input-row">
+          <input type="number" id="practiceAmt" placeholder="minutes" min="0">
+          <button id="practiceLog">Log</button>
+        </div>
+        <div class="input-hint">1 min practiced = 1 min earned.</div>
+      </div>
+    `;
+    document.getElementById('practiceLog').onclick = () => {
+      const t = PRACTICE_TYPES.find(p => p.id === document.getElementById('practiceType').value);
+      const val = Number(document.getElementById('practiceAmt').value);
+      if(val > 0) earn(t.name + ' (' + val + 'min)', 'practice', val);
+    };
+    return;
+  }
+
+  const items = allItems().filter(i => i.cat === activeTab);
+  if(items.length === 0){ list.innerHTML = `<div class="empty">Nothing here yet</div>`; return; }
+  list.innerHTML = items.map(i => `
+    <div class="card" data-id="${i.id}">
+      <div class="card-left"><div class="card-name">${i.name}</div><div class="card-tier">${i.tier}</div></div>
+      <div class="card-right pos">+${i.mins}<div class="plus">+</div></div>
+    </div>
+  `).join('');
+  list.querySelectorAll('.card').forEach(c => {
+    c.onclick = () => { const item = allItems().find(x => x.id === c.dataset.id); earn(item.name, item.cat, item.mins); };
+  });
+}
+
+function openAddModal(){
+  const bg = document.createElement('div'); bg.className = 'modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="field"><label>Exercise / activity name</label><input type="text" id="newName" placeholder="e.g. Archer push-up"></div>
+      <div class="field"><label>Category</label>
+        <select id="newCat">${CATS.filter(c=>c.id!=='cardio'&&c.id!=='practice').map(c=>`<option value="${c.id}">${c.label}</option>`).join('')}</select>
+      </div>
+      <div class="field"><label>Minutes earned</label><input type="number" id="newMins" placeholder="e.g. 5" min="1"></div>
+      <div class="modal-actions"><button class="btn" id="cancelAdd">Cancel</button><button class="btn spend" id="confirmAdd">Add</button></div>
+    </div>`;
+  document.body.appendChild(bg);
+  document.getElementById('cancelAdd').onclick = () => bg.remove();
+  document.getElementById('confirmAdd').onclick = () => {
+    const name = document.getElementById('newName').value.trim();
+    const cat = document.getElementById('newCat').value;
+    const mins = document.getElementById('newMins').value;
+    if(name && mins){ addCustomItem(name, cat, mins); bg.remove(); }
+  };
+}
+
+function openSpendModal(){
+  const bg = document.createElement('div'); bg.className = 'modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="field"><label>Minutes to spend (you have ${Math.max(0,state.balance)})</label><input type="number" id="spendMins" placeholder="e.g. 20" min="1"></div>
+      <div class="modal-actions"><button class="btn" id="cancelSpend">Cancel</button><button class="btn spend" id="confirmSpend">Spend</button></div>
+    </div>`;
+  document.body.appendChild(bg);
+  document.getElementById('cancelSpend').onclick = () => bg.remove();
+  document.getElementById('confirmSpend').onclick = () => {
+    const mins = Number(document.getElementById('spendMins').value);
+    if(mins > 0){ spendMinutes(mins); bg.remove(); }
+  };
+}
+
+loadState();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
